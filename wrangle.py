@@ -135,21 +135,25 @@ def prepare_zillow(df):
     get_hist(df)
     get_box(df)
 
-    #Imputing for null values in year_built
-    imputer = SimpleImputer(strategy='median') #build imputer
-    imputer.fit(df[['year_built']]) #fit to data
-    df[['year_built']] = imputer.transform(df[['year_built']])
-    
-    # I will first cast year built and fips as intergers to remove the zeros, then cast as objects
-    df.year_built = df.year_built.astype(int)
-    df.fips = df.fips.astype(int)
-    
+    # Casting year_built and fips as objects
     df.year_built = df.year_built.astype(object)
     df.fips = df.fips.astype(object)
     
     # train/validate/test split
     train_validate, test = train_test_split(df, test_size=.2, random_state=123)
     train, validate = train_test_split(train_validate, test_size=.3, random_state=123)
+
+    #Imputing for null values in year_built
+    
+    imputer = SimpleImputer(strategy='median')  # build imputer
+    
+    imputer.fit(train[['year_built']]) # fit to train
+    
+    # transform the data
+    
+    train[['year_built']] = imputer.transform(train[['year_built']])
+    validate[['year_built']] = imputer.transform(validate[['year_built']])
+    test[['year_built']] = imputer.transform(test[['year_built']])
     
     return train, validate, test  
         
