@@ -164,3 +164,46 @@ def wrangle_zillow():
     train, validate, test = prepare_zillow(get_zillow_raw())
     
     return train, validate, test
+
+
+# Functions to scale data and visualize scaled data
+
+def visualize_scaler(scaler, df, target_columns, bins=10):
+    fig, axs = plt.subplots(len(target_columns), 2, figsize=(16, 9))
+    df_scaled = df.copy()
+    df_scaled[target_columns] = scaler.fit_transform(df[target_columns])
+    for (ax1, ax2), col in zip(axs, target_columns):
+        ax1.hist(df[col], bins=bins)
+        ax1.set(title=f'{col} before scaling', xlabel=col, ylabel='count')
+        ax2.hist(df_scaled[col], bins=bins)
+        ax2.set(title=f'{col} after scaling with {scaler.__class__.__name__}', xlabel=col, ylabel='count')
+    plt.tight_layout()
+    return fig, axs
+
+
+def scale_data(train, validate, test, return_scaler=False):
+    '''
+    Scales the 3 data splits.
+    
+    takes in the train, validate, and test data splits and returns their scaled counterparts.
+    
+    If return_scaler is true, the scaler object will be returned as well.
+    '''
+    columns_to_scale = ['bedrooms', 'bathrooms', 'tax_value', 'tax_amount', 'sqft']
+    
+    train_scaled = train.copy()
+    validate_scaled = validate.copy()
+    test_scaled = test.copy()
+    
+    scaler = MinMaxScaler()
+    scaler.fit(train[columns_to_scale])
+    
+    train_scaled[columns_to_scale] = scaler.transform(train[columns_to_scale])
+    validate_scaled[columns_to_scale] = scaler.transform(validate[columns_to_scale])
+    test_scaled[columns_to_scale] = scaler.transform(test[columns_to_scale])
+    
+    if return_scaler:
+        return scaler, train_scaled, validate_scaled, test_scaled
+    else:
+        return train_scaled, validate_scaled, test_scaled
+
