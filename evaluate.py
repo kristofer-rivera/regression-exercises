@@ -78,7 +78,7 @@ def better_than_baseline(actual, predicted):
     sse_model = sse(actual, predicted)
     return sse_model < sse_baseline
 
-### residual plotting function 
+### evaluation that plots residuals 
 
 def plot_residuals(actual, predicted, data):
     residuals = actual - predicted
