@@ -7,3 +7,4 @@ ipynb_checkponts/
 scaling_rough.ipynb
 acquire.py
 prepare.py
+feature_engineering_splitting_encoding.ipynb
